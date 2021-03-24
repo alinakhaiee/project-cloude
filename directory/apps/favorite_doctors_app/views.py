@@ -2,6 +2,7 @@ from . import favorite_doctor
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask import request,jsonify
 from .models import FavoriteDoctor
+from sqlalchemy.exc import IntegrityError
 from directory import db
 
 
@@ -24,6 +25,9 @@ def add_favorite_doctor():
     except ValueError as e:
         db.session.rollback()
         return {"error":f"{e}"},400
+    except IntegrityError:
+        db.session.rollback()
+        return{"error":'doctor_id and person_id is duplicate!!'},400
     
     return {"massage":"add doctor in favorite successfully"},201
 
@@ -32,7 +36,7 @@ def add_favorite_doctor():
 @jwt_required()
 def get_favorite_doctors():
      identity=get_jwt_identity()
-     doctors=FavoriteDoctor.query.filter(FavoriteDoctor.username.ilike(identity))
+     doctors=FavoriteDoctor.query.filter(FavoriteDoctor.person_id.ilike(identity))
      doctors=[{"doctor_id":doctor.doctor_id} for doctor in doctors]
 
      return jsonify(doctors)

@@ -2,7 +2,7 @@ from . import users
 from flask import request
 from .models import User
 from directory import db
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError,ArgumentError
 from flask_jwt_extended import create_access_token,create_refresh_token,jwt_required, get_jwt_identity
 
 
@@ -38,8 +38,9 @@ def create_user():
 def login():
     if not request.is_json:
         return{"massege": "JSON only!!"}, 400
+    if not request.get_json():
+        return {"massage":"JSON is empty!!"}
     args=request.get_json()
-
     username=args.get('username')
     password=args.get('password')
 
@@ -49,8 +50,8 @@ def login():
     if not user.check_password(password):
         return {"error": "username or password not match!"}, 403
 
-    access_token=create_access_token(identity=user.username,fresh=True)
-    refresh_token=create_refresh_token(identity=user.username)
+    access_token=create_access_token(identity=user.id,fresh=True)
+    refresh_token=create_refresh_token(identity=user.id)
 
     return {"access_token":access_token,"refresh_token":refresh_token},200
 
@@ -60,19 +61,21 @@ def login():
 def modify_user():
     if not request.is_json:
         return{"massege": "JSON only!!"}, 400
-
+    
+    if not request.get_json():
+        return {"massage":"JSON is empty!!"},400
     args=request.get_json()
     identity = get_jwt_identity()
-    user = User.query.filter(User.username.ilike(identity)).first()
+    user = User.query.filter(User.id.ilike(identity)).first()
 
     try:
         if not args.get('role') is None:
-            user.role=args.get('role')
+              user.role=args.get('role')
         if not args.get('number') is None:
             user.number=args.get('number')
         if not args.get('name') is None:
             user.name=args.get('name')
-        db.session.commite()
+        db.session.commit()
     except ValueError as e:
         return {"error":f"{e}"},400
     return {},204
@@ -83,7 +86,7 @@ def modify_user():
 @jwt_required()
 def get_user():
     identity = get_jwt_identity()
-    user = User.query.filter(User.username.ilike(identity)).first()
+    user = User.query.filter(User.id.ilike(identity)).first()
     return {"username": user.username,"number":user.number,"role":user.role,"name":user.name,}
 
 

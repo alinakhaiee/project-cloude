@@ -4,11 +4,8 @@ from directory import db
 
 class FavoriteDoctor(db.Model):
     __tablename__="FavoriteDoctors"
-    doctor_id=Column(Integer(),unique=False,nullable=False)
-    person_id=Column(Integer(),unique=False,nullable=False)
-    __mapper_args__ = {
-        'primary_key':[doctor_id,person_id]
-    }
+    doctor_id=Column(Integer(),primary_key=True)
+    person_id=Column(Integer(),primary_key=True)
 
     @validates('doctor_id')
     def validate_doctor_id(self,key,value):

@@ -7,6 +7,7 @@ from sqlalchemy.orm import validates
 
 
 class Comment(db.Model):
+    __tablename__="comments"
     id=Column(Integer(),primary_key=True)
     doctor_id=Column(Integer(),unique=False,nullable=False)
     person_id=Column(Integer(),unique=False,nullable=False)

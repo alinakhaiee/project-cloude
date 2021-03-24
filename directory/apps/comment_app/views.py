@@ -22,7 +22,7 @@ def create_comment():
         new_comment.role_sender=args.get('role_sender')
         new_comment.text=args.get('text')
         db.session.add(new_comment)
-        db.session.comment()
+        db.session.commit()
 
     except ValueError as e:
         return {"error":f"{e}"},400
@@ -34,7 +34,7 @@ def create_comment():
 def get_comments():
     identity=get_jwt_identity()
 
-    comments=Comment.query.fillter(Comment.doctor_id.ilike(identity))
+    comments=Comment.query.filter(Comment.doctor_id.ilike(identity))
     comments=[{"person_id":comment.person_id,"role_sender":comment.role_sender,"text":comment.text} for comment in comments]
 
     return jsonify(comments)
