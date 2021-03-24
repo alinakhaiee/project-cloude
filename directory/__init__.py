@@ -16,3 +16,5 @@ from directory.apps.users_app import users
 app.register_blueprint(users)
 from directory.apps.favorite_doctors_app import favorite_doctor
 app.register_blueprint(favorite_doctor)
+from directory.apps.comment_app import comment
+app.register_blueprint(comment)

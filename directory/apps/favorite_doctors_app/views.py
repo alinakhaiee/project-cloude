@@ -1,6 +1,6 @@
 from . import favorite_doctor
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from flask import request
+from flask import request,jsonify
 from .models import FavoriteDoctor
 from directory import db
 
@@ -26,3 +26,14 @@ def add_favorite_doctor():
         return {"error":f"{e}"},400
     
     return {"massage":"add doctor in favorite successfully"},201
+
+
+@favorite_doctor.route('/',methods=['GET'])
+@jwt_required()
+def get_favorite_doctors():
+     identity=get_jwt_identity()
+     doctors=FavoriteDoctor.query.filter(FavoriteDoctor.username.ilike(identity))
+     doctors=[{"doctor_id":doctor.doctor_id} for doctor in doctors]
+
+     return jsonify(doctors)
+
