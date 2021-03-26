@@ -23,3 +23,5 @@ from directory.apps.favorite_doctors_app import favorite_doctor
 app.register_blueprint(favorite_doctor)
 from directory.apps.comment_app import comment
 app.register_blueprint(comment)
+from directory.apps.doctors_app import doctors
+app.register_blueprint(doctors)
