@@ -2,6 +2,7 @@ from .import comment
 from flask_jwt_extended import jwt_required,get_jwt_identity
 from flask import request,jsonify
 from .models import Comment
+from ..users_app.models import User
 from directory import db
 
 
@@ -19,13 +20,13 @@ def create_comment():
         new_comment=Comment()
         new_comment.doctor_id=args.get('doctor_id')
         new_comment.person_id=identity
-        new_comment.role_sender=args.get('role_sender')
         new_comment.text=args.get('text')
         db.session.add(new_comment)
         db.session.commit()
 
     except ValueError as e:
         return {"error":f"{e}"},400
+    
 
     return {"massage":"create comment successfully"},201
 
@@ -33,8 +34,7 @@ def create_comment():
 @jwt_required()
 def get_comments():
     identity=get_jwt_identity()
-
     comments=Comment.query.filter(Comment.doctor_id.ilike(identity))
     comments=[{"person_id":comment.person_id,"role_sender":comment.role_sender,"text":comment.text} for comment in comments]
 
-    return jsonify(comments)
+    return jsonify(identity)

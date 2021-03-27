@@ -1,5 +1,5 @@
 from sqlalchemy import Column,Integer,String,DECIMAL
-from sqlalchemy.orm import validates
+from sqlalchemy.orm import validates,relationship
 from werkzeug.security import generate_password_hash,check_password_hash
 from directory import db
 
@@ -13,6 +13,7 @@ class User(db.Model):
     role=Column(String(32),unique=False,nullable=False)
     name=Column(String(32),unique=False,nullable=False)
     number=Column(String(32),unique=False,nullable=False)
+    comment=relationship('Comment',backref='person',cascade="all, delete",passive_deletes=True)
 
 
 
