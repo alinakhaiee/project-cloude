@@ -14,6 +14,8 @@ class User(db.Model):
     name=Column(String(32),unique=False,nullable=False)
     number=Column(String(32),unique=False,nullable=False)
     comment=relationship('Comment',backref='person',cascade="all, delete",passive_deletes=True)
+    favorite_doctor=relationship('FavoriteDoctor',backref='person',cascade="all, delete",passive_deletes=True)
+    visit_doctor=relationship('VisitDoctor',backref='person',cascade="all, delete",passive_deletes=True)
 
 
 

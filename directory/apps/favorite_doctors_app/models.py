@@ -1,11 +1,11 @@
-from sqlalchemy import Column,Integer
+from sqlalchemy import Column,Integer,ForeignKey
 from sqlalchemy.orm import validates
 from directory import db
 
 class FavoriteDoctor(db.Model):
     __tablename__="FavoriteDoctors"
     doctor_id=Column(Integer(),primary_key=True)
-    person_id=Column(Integer(),primary_key=True)
+    person_id=Column(Integer,ForeignKey('users.id', ondelete="CASCADE"),primary_key=True)
 
     @validates('doctor_id')
     def validate_doctor_id(self,key,value):

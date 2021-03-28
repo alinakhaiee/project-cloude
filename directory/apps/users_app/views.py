@@ -1,5 +1,5 @@
 from . import users
-from flask import request
+from flask import request,jsonify
 from .models import User
 from directory import db
 from sqlalchemy.exc import IntegrityError,ArgumentError
@@ -7,7 +7,7 @@ from flask_jwt_extended import create_access_token,create_refresh_token,jwt_requ
 
 
 
-@users.route("/" ,methods=['POST'])
+@users.route("/create" ,methods=['POST'])
 def create_user():
     if not request.is_json:
         return {"massage":"JSON only!!"},400
@@ -56,7 +56,7 @@ def login():
     return {"access_token":access_token,"refresh_token":refresh_token},200
 
 
-@users.route('/',methods=['PATCH'])
+@users.route('/modify',methods=['PATCH'])
 @jwt_required()
 def modify_user():
     if not request.is_json:
@@ -82,13 +82,21 @@ def modify_user():
 
 
 
-@users.route('/', methods=['GET'])
+@users.route('/get', methods=['GET'])
 @jwt_required()
 def get_user():
     identity = get_jwt_identity()
     user = User.query.filter(User.id.ilike(identity)).first()
     return {"username": user.username,"number":user.number,"role":user.role,"name":user.name,}
 
+
+@users.route('/getfavorite', methods=['GET'])
+@jwt_required()
+def get_favorite():
+    identity = get_jwt_identity()
+    user = User.query.filter(User.id.ilike(identity)).first()
+    user=[{"doctor_id":id.doctor_id,"person_id":id.person_id} for id in user.favorite_doctor]
+    return jsonify(user)
 
 @users.route('/auth/',methods=['PUT'])
 @jwt_required(refresh=True)

@@ -1,6 +1,6 @@
-from sqlalchemy import Column,Integer,String,Text
+from sqlalchemy import Column,Integer,String,Text,ForeignKey,DateTime
 from directory import db
-from sqlalchemy.orm import validates
+from sqlalchemy.orm import validates,relationship
 from werkzeug.security import generate_password_hash
 
 
@@ -17,6 +17,7 @@ class Doctor(db.Model):
     evidence=Column(String(32),unique=False,nullable=False)
     number_phone=Column(String(32),unique=False,nullable=True)
     address=Column(Text(),unique=False,nullable=True)
+    visit_doctor=relationship('VisitDoctor',backref='doctor',cascade="all, delete",passive_deletes=True)
 
     @validates('username')
     def validate_username(self,key,value):
@@ -54,4 +55,29 @@ class Doctor(db.Model):
     def validate_workplace(self,key,value):
         if value is None:
             raise ValueError("workplace can not null!!")
+        return value
+
+class VisitDoctor(db.Model):
+    id=Column(Integer(),primary_key=True)
+    doctor_id=Column(Integer(),ForeignKey('doctors.id', ondelete="CASCADE"))
+    person_id=Column(Integer(),ForeignKey('users.id', ondelete="CASCADE"))
+    time_visit=Column(DateTime(),unique=False,nullable=False)
+
+
+    @validates('doctor_id')
+    def validate_specialty(self,key,value):
+        if value is None:
+            raise ValueError("doctor_id can not null!!")
+        return value
+
+    @validates('person_id')
+    def validate_evidence(self,key,value):
+        if value is None:
+            raise ValueError("person_id can not null!!")
+        return value
+
+    @validates('time_visit')
+    def validate_workplace(self,key,value):
+        if value is None:
+            raise ValueError("time_visit can not null!!")
         return value

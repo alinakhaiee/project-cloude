@@ -2,7 +2,6 @@ from .import comment
 from flask_jwt_extended import jwt_required,get_jwt_identity
 from flask import request,jsonify
 from .models import Comment
-from ..users_app.models import User
 from directory import db
 
 
@@ -37,4 +36,4 @@ def get_comments():
     comments=Comment.query.filter(Comment.doctor_id.ilike(identity))
     comments=[{"person_id":comment.person_id,"role_sender":comment.role_sender,"text":comment.text} for comment in comments]
 
-    return jsonify(identity)
+    return jsonify(comments)

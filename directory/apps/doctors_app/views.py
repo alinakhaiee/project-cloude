@@ -1,12 +1,13 @@
 from . import doctors
 from .models import Doctor
+from .models import VisitDoctor
 from flask import request,jsonify
 from directory import db
 from sqlalchemy.exc import IntegrityError
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 
-@doctors.route('/', methods=['POST'])
+@doctors.route('/create', methods=['POST'])
 def create_doctor():
     if not request.is_json:
         return {"massage": "JSON only!!"}, 400
@@ -67,3 +68,46 @@ def search_doctor():
     doc = [{"id": doctor.id,"username":doctor.username, "name": doctor.name, "city": doctor.city, "workplace": doctor.workplace, "specialty": doctor.specialty,
             "evidence": doctor.evidence, "number_phone": doctor.number_phone, "address": doctor.address} for doctor in doc]
     return jsonify(doc)
+
+
+@doctors.route('/get-datatime',methods=['POST'])
+@jwt_required()
+def get_datatime():
+    if not request.is_json:
+        return{"massege": "JSON only!!"}, 400
+
+    if not request.get_json():
+        return {"massage": "JSON is empty!!"}, 400
+
+    args = request.get_json()
+    #get time user.
+    #conect to table visiting time and get times Specified by the desired physician.
+    #return then .
+    return {"time1":"2-4","time2":"10-12","time3":"16-18"}
+
+
+@doctors.route('/set-timevisit',methods=['POST'])
+@jwt_required()
+def set_timevisit():
+    if not request.is_json:
+        return{"massege": "JSON only!!"}, 400
+
+    if not request.get_json():
+        return {"massage": "JSON is empty!!"}, 400
+
+    args = request.get_json()
+    identity=get_jwt_identity()
+
+    try:
+        new_visit=VisitDoctor()
+        new_visit.doctor_id=args.get('doctor_id')
+        new_visit.person_id=identity
+        new_visit.time_visit=args.get('time_visit')
+
+        db.session.add(new_visit)
+        db.session.commit()
+    except ValueError as e:
+        return {"error":f"{e}"},400
+
+    return {"massage":"set time visit doctor successfully"},201
+

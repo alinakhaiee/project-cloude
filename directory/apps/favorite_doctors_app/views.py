@@ -8,7 +8,7 @@ from directory import db
 
 
 
-@favorite_doctor.route('/',methods=['POST'])
+@favorite_doctor.route('/add',methods=['POST'])
 @jwt_required()
 def add_favorite_doctor():
     if not request.is_json:
@@ -32,12 +32,4 @@ def add_favorite_doctor():
     return {"massage":"add doctor in favorite successfully"},201
 
 
-@favorite_doctor.route('/',methods=['GET'])
-@jwt_required()
-def get_favorite_doctors():
-     identity=get_jwt_identity()
-     doctors=FavoriteDoctor.query.filter(FavoriteDoctor.person_id.ilike(identity))
-     doctors=[{"doctor_id":doctor.doctor_id} for doctor in doctors]
-
-     return jsonify(doctors)
 
