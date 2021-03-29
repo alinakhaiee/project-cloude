@@ -5,7 +5,7 @@ from .models import Comment
 from directory import db
 
 
-@comment.route('/',methods=['POST'])
+@comment.route('/create',methods=['POST'])
 @jwt_required()
 def create_comment():
 
@@ -32,6 +32,7 @@ def create_comment():
 @comment.route('/',methods=['GET'])
 @jwt_required()
 def get_comments():
+    # api for doctor
     identity=get_jwt_identity()
     comments=Comment.query.filter(Comment.doctor_id.ilike(identity))
     comments=[{"person_id":comment.person_id,"role_sender":comment.role_sender,"text":comment.text} for comment in comments]

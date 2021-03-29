@@ -70,17 +70,10 @@ def search_doctor():
     return jsonify(doc)
 
 
-@doctors.route('/get-datatime',methods=['POST'])
+@doctors.route('/get-datatime/<string:time>',methods=['GET'])
 @jwt_required()
-def get_datatime():
-    if not request.is_json:
-        return{"massege": "JSON only!!"}, 400
-
-    if not request.get_json():
-        return {"massage": "JSON is empty!!"}, 400
-
-    args = request.get_json()
-    #get time user.
+def get_datatime(time):
+    #get time of user.
     #conect to table visiting time and get times Specified by the desired physician.
     #return then .
     return {"time1":"2-4","time2":"10-12","time3":"16-18"}
